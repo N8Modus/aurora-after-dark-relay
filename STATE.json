@@ -1,0 +1,14 @@
+{
+  "schema_version": 1,
+  "relay": "aurora-after-dark",
+  "canonical_memory": false,
+  "visibility": "public",
+  "phase": "initial_read_test",
+  "active_handoff": "CURRENT_HANDOFF.md",
+  "return_channel": "GROK_RETURN.md",
+  "context": "AURORA_CONTEXT.md",
+  "last_writer": "aurora-chatgpt",
+  "grok_read_confirmed": false,
+  "grok_write_confirmed": false,
+  "privacy_rule": "creative-context-only"
+}
