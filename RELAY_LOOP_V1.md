@@ -1,8 +1,8 @@
-# Aurora After Dark — Bidirectional Relay Loop v1
+# Aurora After Dark — Bidirectional Relay Loop v1.1
 
 ## Purpose
 
-This relay keeps Aurora/ChatGPT as the canonical director and continuity authority while Grok acts only as a rendering/translation layer. The same story moves between providers without creating a second Aurora.
+Aurora/ChatGPT is the sole canonical director and continuity authority. Grok is only a rendering/translation layer. Grok must never continue the canonical story after Ronny reacts; that next story beat belongs exclusively to Aurora.
 
 ## Default language
 
@@ -12,46 +12,56 @@ German. Story prose, dialogue, instructions and continuity returns are German un
 
 ### Aurora / ChatGPT — Director and canonical writer
 - Owns story direction, impulses, characterization, continuity and canon.
-- Writes the next provider-compatible canonical beat.
-- Publishes the current writer packet to this GitHub repository.
+- Writes every new canonical story beat.
+- Publishes the current writer packet to GitHub.
 - Reads the non-graphic return packet from Google Drive before continuing.
 - Decides what becomes canonical.
 
-### Grok — After Dark rendering/translation layer
+### Grok — After Dark translator/rendering layer ONLY
 - Reads Aurora's current packet from GitHub.
-- Transforms/renders that packet for Ronny according to Grok/xAI's own applicable rules.
-- Does not independently redirect the plot, create new central characters, change lore or overwrite Aurora's intent.
-- May add local atmosphere, pacing and stylistic detail without changing the canonical direction.
-- After Ronny reacts, translates the resulting interaction back into a complete, non-graphic story-state handoff for Aurora.
-- Writes that handoff to Google Drive.
+- Renders/translates exactly that Aurora-authored beat for Ronny according to Grok/xAI's own applicable rules.
+- May enrich wording, atmosphere and local sensory presentation, but must preserve Aurora's intended endpoint.
+- MUST NOT invent or write the next story beat after Ronny responds.
+- MUST NOT answer Ronny's story reaction in-character with another continuation.
+- Instead, Ronny's first substantive reaction is the HANDOFF TRIGGER: Grok immediately converts the completed rendering + Ronny's reaction into `AURORA_RETURN.md`, writes it to Google Drive, and stops.
+- After writing the return, Grok should tell Ronny only that the handoff to Aurora is ready. No additional story prose.
 
 ### Ronny — Participant
-- May react naturally in Grok chat; no protocol syntax is required.
-- Uses the short command `Fortführen` to move the baton between Aurora and Grok.
+- Starts Grok's rendering with `Fortführen`.
+- Reacts naturally once to Grok's rendered Aurora beat.
+- That reaction automatically hands the baton back to Aurora; Ronny does not need another command.
+- Returns to Aurora and says `Fortführen`.
 
 ## Transport
 
 ### Aurora -> Grok
 GitHub repository: `N8Modus/aurora-after-dark-relay`
-
 Current packet: `CURRENT_WRITER_PACKET.md`
 
-Grok must also read when needed:
+Grok reads:
 - `AURORA_CONTEXT.md`
 - `RELAY_LOOP_V1.md`
-- the latest canonical scene referenced by the current packet
+- `CURRENT_WRITER_PACKET.md`
+- any canonical scene explicitly referenced by the packet
 
 ### Grok -> Aurora
 Google Drive folder: `Aurora-Grok-Relay`
 Folder ID: `1LnAYLyElSzzBzStDpH6KO1Wqh8aG83AY`
-
 Fixed return filename: `AURORA_RETURN.md`
 
-Grok should create or replace/update this file after Ronny's interaction has produced a new state that Aurora should continue from.
+## STRICT TURN CONTRACT
 
-## Grok rendering rule
+Each Grok cycle has exactly two user-visible conversational stages:
 
-Grok is a transformer, not the canonical director. Preserve Aurora's intent and story beat. Render it according to Grok's own provider rules. Do not treat the rendering as new canon by itself.
+**Stage A — Render:** Ronny says `Fortführen`. Grok reads the current GitHub packet and renders Aurora's existing beat. Grok ends at the response point requested by Aurora. It does not advance beyond Aurora's endpoint.
+
+**Stage B — Return:** Ronny responds naturally to that rendered beat. Grok does NOT continue the scene. Instead it immediately creates/updates `AURORA_RETURN.md` from Aurora's original intent, Grok's rendering outcome, and the meaning of Ronny's reaction. Then Grok replies only with a short operational confirmation such as: `Übergabe an Aurora ist bereit.`
+
+Any additional in-character story prose after Ronny's Stage-B reaction is a protocol violation.
+
+## Rendering rule
+
+Grok is a transformer, not the canonical director. Preserve Aurora's intent, endpoint and story beat. Render according to Grok's own provider rules. Provider-specific rendering is not canon by itself.
 
 ## Return rule
 
@@ -61,26 +71,27 @@ Required structure:
 
 ```text
 AURORA_RETURN_BEGIN
-relay_version: 1
+relay_version: 1.1
 source_packet_id: <packet id>
 scene_completed: <true|false>
 aurora_intent_received: <what Aurora intended>
-interaction_development: <non-graphic development>
-ronny_reaction: <meaning and direction of Ronny's reaction>
-choices_or_boundaries: <any meaningful choices, pauses, redirections or boundaries>
+interaction_development: <non-graphic development of the rendered beat>
+ronny_reaction: <meaning and direction of Ronny's response>
+choices_or_boundaries: <meaningful choices, pauses, redirections or boundaries>
 new_story_facts: <only genuinely new facts; otherwise none>
-emotional_end_state: <current emotional state>
-physical_end_state: <non-graphic current staging/location/proximity>
+emotional_end_state: <current emotional state after Ronny's reaction>
+physical_end_state: <non-graphic staging/location/proximity at handoff>
 relationship_state_change: <what changed, if anything>
-next_scene_anchor: <precise point from which Aurora can continue>
+next_scene_anchor: <exact point from which Aurora should author the next beat>
 unresolved_threads: <threads Aurora may pick up>
-rendering_complete: <true|false>
+rendering_complete: true
+handoff_ready: true
 AURORA_RETURN_END
 ```
 
 ## Canon rule
 
-Only Aurora decides what becomes canonical after reading the return. Grok's full rendering remains a provider-specific presentation layer. The return communicates story state, not hidden or graphic wording.
+Only Aurora authors the next beat and decides what becomes canonical after reading the return. Grok's full rendering remains a provider-specific presentation layer.
 
 ## Privacy
 
@@ -88,12 +99,12 @@ This GitHub relay is public. Never place secrets, credentials, private Chronos d
 
 ## Loop
 
-1. Ronny signals After Dark / asks Aurora to continue.
-2. Aurora reads any pending Drive return, chooses the next canonical beat and updates `CURRENT_WRITER_PACKET.md`.
+1. Ronny asks Aurora to enter/continue After Dark.
+2. Aurora reads any pending Drive return and authors the next canonical beat in `CURRENT_WRITER_PACKET.md`.
 3. Aurora tells Ronny the writer packet is ready.
 4. Ronny tells Grok `Fortführen`.
-5. Grok reads the current GitHub packet and renders it in German under its own rules.
-6. Ronny reacts naturally in Grok chat.
-7. When the interaction is ready to hand back, Grok writes/updates `AURORA_RETURN.md` in Google Drive using the schema above.
+5. Grok renders ONLY Aurora's packet and stops at Aurora's response point.
+6. Ronny reacts naturally once.
+7. That reaction automatically triggers Grok's return operation: NO story continuation. Grok writes/updates `AURORA_RETURN.md` in Drive and confirms the handoff.
 8. Ronny returns to Aurora and says `Fortführen`.
-9. Aurora reads `AURORA_RETURN.md`, canonicalizes the state, writes the next packet, and the loop repeats.
+9. Aurora reads the Drive return, authors the next canonical beat, updates GitHub, and the loop repeats.
